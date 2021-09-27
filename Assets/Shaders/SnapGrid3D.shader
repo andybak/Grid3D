@@ -153,7 +153,7 @@ Shader "Custom/Grid3D"
                     round(_PointerOffset_CS.y * g.y) / g.y,
                     round(_PointerOffset_CS.z * g.z) / g.z
                 );
-                float3 quantizedPointerOffset_GS = mul(quantizedPointerOffset, _CanvasMatrix) * ;
+                float3 quantizedPointerOffset_GS = mul(quantizedPointerOffset, _CanvasMatrix);
                 // float3 _quantizedGridOffset_CS = _PointerOrigin_CS - quantizedPointerOrigin_CS;
                 // float3 _quantizedGridOffset_GS = mul(_quantizedGridOffset_CS, transpose(_CanvasMatrix));
                 float3 vertexPos_GS = mul(_CanvasMatrix, vertexPos_CS);
