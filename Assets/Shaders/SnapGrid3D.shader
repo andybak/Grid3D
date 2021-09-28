@@ -147,6 +147,9 @@ Shader "Custom/Grid3D"
 
 
                 // Here be monsters
+
+                // CS = mul(_CanvasMatrix, GS);
+                // GS = mul(_InverseCanvasMatrix, CS);
                 
                 float3 _PointerOffset_CS = mul(_CanvasMatrix, _CanvasOrigin_GS - _PointerOrigin_GS);
                 

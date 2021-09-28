@@ -14,7 +14,8 @@ public class SnapGrid3D : MonoBehaviour
         public static readonly int GridInterval = Shader.PropertyToID("_GridInterval");
         public static readonly int LineWidth = Shader.PropertyToID("_LineWidth");
         public static readonly int LineLength = Shader.PropertyToID("_LineLength");
-        public static readonly int CanvasMatrix = Shader.PropertyToID("_CanvasMatrix");
+        public static readonly int CanvasToWorldMatrix = Shader.PropertyToID("_CanvasMatrix");
+        public static readonly int WorldToCanvasMatrix = Shader.PropertyToID("_InverseCanvasMatrix");
         public static readonly int CanvasScale = Shader.PropertyToID("_CanvasScale");
         
     }
@@ -48,7 +49,9 @@ public class SnapGrid3D : MonoBehaviour
 
             var vertexCount = gridCount.x * gridCount.y * gridCount.z * starVertexCount;
 
-            material.SetMatrix(ShaderParam.CanvasMatrix, canvas.transform.localToWorldMatrix);
+            material.SetMatrix(ShaderParam.CanvasToWorldMatrix, canvas.transform.localToWorldMatrix);
+            material.SetMatrix(ShaderParam.WorldToCanvasMatrix, canvas.transform.worldToLocalMatrix);
+            
             material.SetVector(ShaderParam.PointerOrigin, pointer.position);
             material.SetVector(ShaderParam.CanvasOrigin, canvas.position);
             material.SetColor(ShaderParam.Color, color);
