@@ -15,6 +15,8 @@ public class SnapGrid3D : MonoBehaviour
         public static readonly int LineWidth = Shader.PropertyToID("_LineWidth");
         public static readonly int LineLength = Shader.PropertyToID("_LineLength");
         public static readonly int CanvasMatrix = Shader.PropertyToID("_CanvasMatrix");
+        public static readonly int CanvasScale = Shader.PropertyToID("_CanvasScale");
+        
     }
 
     public Material material;
@@ -54,6 +56,7 @@ public class SnapGrid3D : MonoBehaviour
             material.SetFloat(ShaderParam.GridInterval, gridInterval);
             material.SetFloat(ShaderParam.LineWidth, lineWidth);
             material.SetFloat(ShaderParam.LineLength, lineLength);
+            material.SetFloat(ShaderParam.CanvasScale, canvas.transform.lossyScale.x);
 
             material.SetPass(0);
             Graphics.DrawProceduralNow(MeshTopology.Triangles, vertexCount);

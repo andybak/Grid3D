@@ -67,6 +67,7 @@ Shader "Custom/Grid3D"
             float _GridInterval;
             float _LineWidth;
             float _LineLength;
+            float _CanvasScale; 
             float4x4 _CanvasMatrix;
 
             struct appdata
@@ -154,12 +155,8 @@ Shader "Custom/Grid3D"
                     round(_PointerOffset_CS.z * g.z) / g.z
                 );
                 float3 quantizedPointerOffset_GS = mul(quantizedPointerOffset, _CanvasMatrix);
-                // float3 _quantizedGridOffset_CS = _PointerOrigin_CS - quantizedPointerOrigin_CS;
-                // float3 _quantizedGridOffset_GS = mul(_quantizedGridOffset_CS, transpose(_CanvasMatrix));
                 float3 vertexPos_GS = mul(_CanvasMatrix, vertexPos_CS);
-                o.vertex = mul(UNITY_MATRIX_VP, float4(vertexPos_GS + _CanvasOrigin_GS - quantizedPointerOffset_GS, 1));
-
-
+                o.vertex = mul(UNITY_MATRIX_VP, float4(vertexPos_GS + _CanvasOrigin_GS - (quantizedPointerOffset_GS/(_CanvasScale * _CanvasScale)), 1));
 
                 
                 // TODO - the brightness of each grid point should be based on the non-quantized pointer position.
