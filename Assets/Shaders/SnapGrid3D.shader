@@ -143,24 +143,25 @@ Shader "Custom/Grid3D"
 
                 float3 gridOrigin_CS = _GridCount * -0.5;
                 float3 vertexPos_CS = (xyzIndex + gridOrigin_CS) * _GridInterval + quad;
-                float3 g = 1.0/_GridInterval;
+                float3 g = 1.0/(_GridInterval * _CanvasScale * _CanvasScale);
 
 
                 // Here be monsters
                 
                 float3 _PointerOffset_CS = mul(_CanvasMatrix, _CanvasOrigin_GS - _PointerOrigin_GS);
-                float3 quantizedPointerOffset = float3(
+                
+                float3 quantizedPointerOffset_CS = float3(
                     round(_PointerOffset_CS.x * g.x) / g.x,
                     round(_PointerOffset_CS.y * g.y) / g.y,
                     round(_PointerOffset_CS.z * g.z) / g.z
                 );
-                float3 quantizedPointerOffset_GS = mul(quantizedPointerOffset, _CanvasMatrix);
-                float3 vertexPos_GS = mul(_CanvasMatrix, vertexPos_CS);
-                o.vertex = mul(UNITY_MATRIX_VP, float4(vertexPos_GS + _CanvasOrigin_GS - (quantizedPointerOffset_GS/(_CanvasScale * _CanvasScale)), 1));
 
+                vertexPos_CS += quantizedPointerOffset_CS/(_CanvasScale * _CanvasScale);
+                float3 vertexPos_GS = mul(_CanvasMatrix, vertexPos_CS);
+                o.vertex = mul(UNITY_MATRIX_VP, float4(vertexPos_GS + _CanvasOrigin_GS, 1));
                 
                 // TODO - the brightness of each grid point should be based on the non-quantized pointer position.
-                //float3 remainder = (quantizedPointerOrigin_CS - _PointerOrigin_CS) / 2.0;
+                //float3 remainder = (quantizedPointerOffset_CS - _PointerOffset_CS) * g;
                 float3 remainder = float3(0, 0, 0);
                 float d = (
                     quickdist(xyzIndex.x + remainder.x) +
