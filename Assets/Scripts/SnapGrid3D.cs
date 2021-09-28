@@ -14,8 +14,8 @@ public class SnapGrid3D : MonoBehaviour
         public static readonly int GridInterval = Shader.PropertyToID("_GridInterval");
         public static readonly int LineWidth = Shader.PropertyToID("_LineWidth");
         public static readonly int LineLength = Shader.PropertyToID("_LineLength");
-        public static readonly int CanvasToWorldMatrix = Shader.PropertyToID("_CanvasMatrix");
-        public static readonly int WorldToCanvasMatrix = Shader.PropertyToID("_InverseCanvasMatrix");
+        public static readonly int CanvasToWorldMatrix = Shader.PropertyToID("_CanvasToWorldMatrix");
+        public static readonly int WorldToCanvasMatrix = Shader.PropertyToID("_WorldToCanvasMatrix");
         public static readonly int CanvasScale = Shader.PropertyToID("_CanvasScale");
         
     }

@@ -68,7 +68,8 @@ Shader "Custom/Grid3D"
             float _LineWidth;
             float _LineLength;
             float _CanvasScale; 
-            float4x4 _CanvasMatrix;
+            float4x4 _CanvasToWorldMatrix;
+            float4x4 _WorldToCanvasMatrix;
 
             struct appdata
             {
@@ -136,35 +137,28 @@ Shader "Custom/Grid3D"
                 uint starIndex = v.id / vtx_per_star;
                 int3 gridCount = _GridCount;
                 float3 xyzIndex = float3(
-                    (starIndex / gridCount.z) % gridCount.x + 0.5,
+                    starIndex / gridCount.z % gridCount.x + 0.5,
                     starIndex / (gridCount.x * gridCount.z) + 0.5,
                     starIndex % gridCount.z + 0.5
                 );
 
                 float3 gridOrigin_CS = _GridCount * -0.5;
                 float3 vertexPos_CS = (xyzIndex + gridOrigin_CS) * _GridInterval + quad;
-                float3 g = 1.0/(_GridInterval * _CanvasScale * _CanvasScale);
-
-
-                // Here be monsters
-
-                // CS = mul(_CanvasMatrix, GS);
-                // GS = mul(_InverseCanvasMatrix, CS);
                 
-                float3 _PointerOffset_CS = mul(_CanvasMatrix, _CanvasOrigin_GS - _PointerOrigin_GS);
+                float3 _PointerOrigin_CS = mul(_WorldToCanvasMatrix, _PointerOrigin_GS);
                 
-                float3 quantizedPointerOffset_CS = float3(
-                    round(_PointerOffset_CS.x * g.x) / g.x,
-                    round(_PointerOffset_CS.y * g.y) / g.y,
-                    round(_PointerOffset_CS.z * g.z) / g.z
+                float3 quantizedPointer_CS = float3(
+                    round(_PointerOrigin_CS.x / _GridInterval) * _GridInterval,
+                    round(_PointerOrigin_CS.y / _GridInterval) * _GridInterval,
+                    round(_PointerOrigin_CS.z / _GridInterval) * _GridInterval
                 );
 
-                vertexPos_CS += quantizedPointerOffset_CS/(_CanvasScale * _CanvasScale);
-                float3 vertexPos_GS = mul(_CanvasMatrix, vertexPos_CS);
+                vertexPos_CS += quantizedPointer_CS;
+                float3 vertexPos_GS = mul(_CanvasToWorldMatrix, vertexPos_CS);
                 o.vertex = mul(UNITY_MATRIX_VP, float4(vertexPos_GS + _CanvasOrigin_GS, 1));
                 
                 // TODO - the brightness of each grid point should be based on the non-quantized pointer position.
-                //float3 remainder = (quantizedPointerOffset_CS - _PointerOffset_CS) * g;
+                //float3 remainder = (quantizedPointerOffset_CS - _PointerOffset_CS) * _GridInterval;
                 float3 remainder = float3(0, 0, 0);
                 float d = (
                     quickdist(xyzIndex.x + remainder.x) +
